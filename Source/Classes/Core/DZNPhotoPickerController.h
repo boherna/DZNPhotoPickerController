@@ -52,6 +52,8 @@ typedef void (^DZNPhotoPickerControllerCancellationBlock)(DZNPhotoPickerControll
 /** YES if images should load automatically once reaching the bottom of the scroll view. Default is NO. */
 @property (nonatomic, assign) BOOL infiniteScrollingEnabled;
 
+@property (nonatomic, strong) UIView *customTitleView;
+
 /**
  Returns an array of the available media types for the specified service type.
  @discussion Only kUTTypeImage will be returned for now. Maybe on a future, this library could have video and audio search support.

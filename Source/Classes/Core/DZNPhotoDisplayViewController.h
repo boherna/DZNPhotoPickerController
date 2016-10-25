@@ -25,6 +25,8 @@
 /** YES if the controller started a request and loading content. */
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
+@property (nonatomic, strong) UIView *customTitleView;
+
 /**
  Initializes and returns a newly created photo display controller.
  

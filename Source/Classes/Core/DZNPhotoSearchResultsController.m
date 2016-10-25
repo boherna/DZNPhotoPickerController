@@ -85,7 +85,7 @@ static NSString *kDZNTagCellViewIdentifier = @"com.dzn.tagCellViewIdentifier";
         
         DZNPhotoTag *tag = [self tagAtIndexPath:indexPath];
 
-        if (self.searchResult.count == 1) text = [NSString stringWithFormat:NSLocalizedString(@"Search for \"%@\"", nil), tag.term];
+        if (self.searchResult.count == 1) text = [NSString stringWithFormat:NSLocalizedString(@"searchForCellLabel", nil), tag.term];
         else text = tag.term;
     }
     

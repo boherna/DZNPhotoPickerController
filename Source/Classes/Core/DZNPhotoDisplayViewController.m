@@ -110,6 +110,11 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
     [self.collectionView registerClass:[DZNPhotoDisplayViewCell class] forCellWithReuseIdentifier:kDZNPhotoCellViewIdentifier];
     [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDZNSupplementaryViewIdentifier];
     [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:kDZNSupplementaryViewIdentifier];
+
+	if (self.customTitleView)
+	{
+		self.navigationItem.titleView = self.customTitleView;
+	}
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -179,7 +184,7 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
         _searchController.hidesNavigationBarDuringPresentation = YES;
 
         UISearchBar *searchBar = _searchController.searchBar;
-        searchBar.placeholder = NSLocalizedString(@"Search", nil);
+        searchBar.placeholder = NSLocalizedString(@"searchPlaceholder", nil);
         searchBar.text = self.navigationController.initialSearchTerm;
         searchBar.scopeButtonTitles = self.segmentedControlTitles;
         searchBar.searchBarStyle = UISearchBarStyleProminent;
@@ -466,7 +471,7 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
     else {
         [self setActivityIndicatorsVisible:YES];
         
-        [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:metadata.sourceURL
+        [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:metadata.thumbURL
                                                               options:SDWebImageCacheMemoryOnly|SDWebImageRetryFailed
                                                              progress:NULL
                                                             completed:^(UIImage *image, NSData *data, NSError *error, BOOL finished){
@@ -540,14 +545,17 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
 /* Checks if the search string is valid and conditions are ok, for performing a photo search. */
 - (void)shouldSearchPhotos:(NSString *)keyword
 {
-    if ([self.searchBar.text isEqualToString:keyword] && self.previousService == self.selectedService) {
+    if (keyword.length && [self.searchBar.text isEqualToString:keyword] && self.previousService == self.selectedService) {
         return;
     }
     
     self.previousService = self.selectedService;
-    
     [self resetPhotos];
-    [self searchPhotosWithKeyword:keyword];
+
+	if (keyword)
+	{
+		[self searchPhotosWithKeyword:keyword];
+	}
 }
 
 /*
@@ -812,7 +820,12 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
     NSString *term = searchBar.text;
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
         [self setSearchBarText:term];
+		if (!term || !term.length)
+		{
+			[self shouldSearchPhotos:term];
+		}
     });
 }
 
@@ -873,10 +886,18 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
     NSString *text = nil;
     
     if (self.error) {
-        text = NSLocalizedString(@"Error", nil);;
+        text = NSLocalizedString(@"errorAlertTitle", nil);;
     }
     else if (!self.loading) {
-        text = NSLocalizedString(@"No Photos Found", nil);
+
+		if (self.searchBar.text.length)
+		{
+			text = NSLocalizedString(@"noPhotosFoundMessage", nil);
+		}
+		else
+		{
+			text = NSLocalizedString(@"noPhotosMessage", nil);
+		}
     }
     
     if (text) {
@@ -900,7 +921,15 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
         text = localizedDescription;
     }
     else if (!self.loading) {
-        text = NSLocalizedString(@"Make sure that all words are\nspelled correctly.", nil);
+
+		if (self.searchBar.text.length)
+		{
+			text = NSLocalizedString(@"noPhotosFoundDescription", nil);
+		}
+		else
+		{
+			text = NSLocalizedString(@"noPhotosDescription", nil);
+		}
     }
     
     if (text) {
@@ -958,7 +987,6 @@ static NSUInteger kDZNPhotoDisplayMinimumColumnCount = 4.0;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     _metadataList = nil;
-    
     _searchController = nil;
     _loadButton = nil;
     _activityIndicator = nil;

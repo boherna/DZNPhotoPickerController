@@ -120,17 +120,23 @@ static DZNPhotoPickerControllerCancellationBlock _cancellationBlock;
 /* Shows the photo display controller. */
 - (void)showPhotoDisplayController
 {
-    [self setViewControllers:@[]];
-    
-    DZNPhotoDisplayViewController *controller = [[DZNPhotoDisplayViewController alloc] initWithPreferredContentSize:self.view.frame.size];
-    if (self.title) controller.title = self.title;
-    
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancelPicker:)];
-        [controller.navigationItem setRightBarButtonItem:cancel];
-    }
-    
-    [self setViewControllers:@[controller]];
+	if (!self.viewControllers.count)
+	{
+		DZNPhotoDisplayViewController *controller = [[DZNPhotoDisplayViewController alloc] initWithPreferredContentSize:self.view.frame.size];
+
+		if (self.customTitleView) controller.customTitleView = self.customTitleView;
+		else
+		{
+			if (self.title) controller.title = self.title;
+		}
+
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+			UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"cancelButtonTitle", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancelPicker:)];
+			[controller.navigationItem setRightBarButtonItem:cancel];
+		}
+
+		[self setViewControllers:@[controller]];
+	}
 }
 
 /* Called by a notification whenever the user picks a photo. */
