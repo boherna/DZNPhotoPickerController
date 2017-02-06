@@ -361,7 +361,7 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
     return height;
 }
 
-CGSize CGSizeAspectFit(CGSize aspectRatio, CGSize boundingSize)
+CGSize DNZ_CGSizeAspectFit(CGSize aspectRatio, CGSize boundingSize)
 {
     CGFloat hRatio = boundingSize.width / aspectRatio.width;
     CGFloat vRation = boundingSize.height / aspectRatio.height;
@@ -666,7 +666,7 @@ DZNPhotoAspect photoAspectFromSize(CGSize aspectRatio)
  */
 - (void)updateScrollViewContentInset
 {
-    CGSize imageSize = CGSizeAspectFit(self.imageView.image.size, self.imageView.frame.size);
+    CGSize imageSize = DNZ_CGSizeAspectFit(self.imageView.image.size, self.imageView.frame.size);
     
     CGFloat maskHeight = (self.cropMode == DZNPhotoEditorViewControllerCropModeCircular) ? self.cropSize.width-(self.innerInset*2) : self.cropSize.height;
     
